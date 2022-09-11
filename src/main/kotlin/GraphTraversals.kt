@@ -1,24 +1,37 @@
 import java.util.*
-import kotlin.collections.ArrayList
 
 class GraphTraversals<T> {
+}
+
+data class GraphNode<T>(
+    val data: T,
+    val adjacent: List<GraphNode<T>>,
+    var isVisited: Boolean = false,
+    var level: Int = 0
+) {
+    override fun toString(): String {
+        return "($data: $level)"
+    }
 
     /**
      * Use a Stack.
      */
-    fun dfs(root: GraphNode<T>): List<GraphNode<T>> {
+    fun dfs(): List<GraphNode<T>> {
         val result = mutableListOf<GraphNode<T>>()
         val stack = Stack<GraphNode<T>>()
 
-        stack.push(root)
-        root.level = 0
+        stack.push(this)
 
         while (stack.isNotEmpty()) {
             val node = stack.pop()
 
             node.isVisited = true
 
+            result.add(node)
+
             val adjacent = node.adjacent
+
+            println("Adj of $node: $adjacent")
 
             adjacent
                 .filterNot { it.isVisited }
@@ -27,7 +40,6 @@ class GraphTraversals<T> {
                     it.level = node.level + 1
                 }
 
-            result.add(node)
         }
 
         return result
@@ -37,12 +49,11 @@ class GraphTraversals<T> {
     /**
      * Use a Queue.
      */
-    fun bfs(root: GraphNode<T>): List<GraphNode<T>> {
+    fun bfs(): List<GraphNode<T>> {
         val result = mutableListOf<GraphNode<T>>()
         val queue: Queue<GraphNode<T>> = LinkedList()
 
-        queue.add(root)
-        root.level = 0
+        queue.add(this)
 
         while (queue.isNotEmpty()) {
             val node = queue.remove()
@@ -62,17 +73,7 @@ class GraphTraversals<T> {
 
         return result
     }
-}
 
-data class GraphNode<T>(
-    val data: T,
-    val adjacent: List<GraphNode<T>>,
-    var isVisited: Boolean = false,
-    var level:Int = 0
-) {
-    override fun toString(): String {
-        return "($data, $level)"
-    }
 }
 
 
@@ -93,14 +94,14 @@ fun main() {
 
     val nodes = listOf(a, b, c, d, e, f, g, h, i)
 
-    val resultB = graphTraversals.dfs(a)
+    val resultB = a.dfs()
 
     nodes.forEach {
         it.isVisited = false
         it.level = 0
     }
 
-    val resultA = graphTraversals.bfs(a)
+    val resultA = a.bfs()
 
     println("Result BFS = $resultA")
 
